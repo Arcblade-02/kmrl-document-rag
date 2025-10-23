@@ -1,0 +1,14 @@
+# .gitignore
+
+# 1. Python Virtual Environment
+# Exclude the entire venv folder (it's large and should not be pushed)
+venv/
+
+# 2. Python Compiled Files
+# Exclude Python's compiled bytecode
+__pycache__/
+*.pyc
+
+# 3. Streamlit Local Cache/Data
+# Exclude local cached data and temporary files
+.streamlit/cache/
