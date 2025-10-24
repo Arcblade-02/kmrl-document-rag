@@ -2,27 +2,60 @@ import streamlit as st
 from google import genai
 from google.genai.errors import APIError
 
+
 # --- RAG CONTEXT (The KMRL Knowledge Base - Hardcoded for this script) ---
 # NOTE: In a real RAG system, this context would come from a dynamic vector search.
 KMRL_DOCUMENTS_CONTEXT = """
 [KMRL_DOCUMENTS_CONTEXT_START]
 
 **DOCUMENT ID: SOP-MAINT-401 (Track Maintenance Procedure)**
-- Track inspection frequency: Daily for all primary running lines (Line 1).
-- Inspection frequency for sidings, yards, and non-primary tracks is Weekly.
-- Team requirement: All track inspections must be conducted by a minimum of two (2) certified technicians.
-- Mandatory tool: The required and standard tool-kit is TK-45A.
-- Safety Protocol: Technicians must notify the Operations Control Centre (OCC) via digital form (Form OCC-A) before any personnel access the track area.
+DOMAIN: Operations, Safety, Compliance
+STAKEHOLDERS: Track Technicians, Maintenance Supervisors, OCC
+LAST_UPDATED: 2025-09-15
+
+- **Purpose**: Standard Operating Procedure for all track inspection activities.
+- **Line 1 Inspection Frequency**: Daily (Primary Running Lines).
+- **Other Track Frequency**: Weekly (Sidings, Yards, Non-Primary Tracks).
+- **Team Requirement**: Minimum of two (2) certified technicians.
+- **Mandatory Tool**: The standard tool-kit is TK-45A.
+- **Safety Protocol**: Must notify the Operations Control Centre (OCC) via digital form (Form OCC-A) before any personnel access the track area. Access is denied without OCC confirmation.
 
 **DOCUMENT ID: POLICY-HR-32B (Human Resources Policy Manual)**
-- Sick Leave: All full-time employees are entitled to 15 days of sick leave per financial year, which accrues annually.
-- Overtime Rate: Overtime is compensated at 1.5 times (1.5x) the base hourly rate for any hours worked in excess of 40 hours in a standard work week.
-- Weekend Pay: All work performed on Saturday or Sunday is considered overtime, regardless of the weekly hour count.
+DOMAIN: Human Resources, Finance, Compensation
+STAKEHOLDERS: All Full-Time Employees, Finance Officers, HR Department
+LAST_UPDATED: 2025-01-01
+
+- **Sick Leave Entitlement**: All full-time employees are entitled to 15 days per financial year.
+- **Sick Leave Accrual**: Accrues annually.
+- **Overtime Rate (Weekly)**: Compensated at 1.5 times (1.5x) the base hourly rate for any hours worked in excess of 40 hours in a standard work week.
+- **Weekend Pay**: All work performed on Saturday or Sunday is considered overtime, regardless of the weekly hour count.
 
 **DOCUMENT ID: PROC-SIGNAL-005 (Signaling Procurement Contract)**
-- Primary Signaling Vendor: Siemens (Contract ID SC-1002).
-- Secondary Vendor: Alstom.
-- Secondary Vendor Use: Utilization of the secondary vendor (Alstom) requires management approval documented on Requisition Form R-3, including a written justification memo.
+DOMAIN: Procurement, Finance, Engineering
+STAKEHOLDERS: Procurement Analysts, Engineering Team, Finance Officers
+LAST_UPDATED: 2024-11-20
+
+- **Primary Signaling Vendor**: Siemens (Contract ID SC-1002).
+- **Secondary Vendor**: Alstom.
+- **Secondary Vendor Use**: Utilization of Alstom requires management approval documented on Requisition Form R-3.
+- **Justification**: Form R-3 must include a written justification memo.
+- **Procurement Order Status Table**:
+[TABLE_DATA_START]
+Item | Qty | Cost_Unit | Vendor | Status | Delivery_Date
+Relay Unit Type B | 45 | 12000 INR | Siemens | Delivered | 2025-03-01
+Jumper Cable Set A | 15 | 800 INR | Alstom | Pending | 2025-11-15
+Sensor Module Z | 5 | 50000 INR | Siemens | Invoiced | N/A
+[TABLE_DATA_END]
+
+**DOCUMENT ID: ENG-INC-022 (Track Fault Incident Report)**
+DOMAIN: Engineering, Maintenance, Finance
+STAKEHOLDERS: Maintenance Supervisors, Executive Directors (Board), Finance Officers
+LAST_UPDATED: 2025-10-23
+
+- **Summary**: Incident involving a contractor-caused track alignment fault (Chainage 12+500, Line 1) that required emergency weekend repair. This incident highlights compliance exposure and financial risk.
+- **Root Cause**: Failure by the contractor's team to file **Form OCC-A** before accessing the track, violating **SOP-MAINT-401**.
+- **Resolution**: Emergency repair was completed on a Sunday by KMRL certified technicians.
+- **Financial Impact**: All hours for the repair team were compensated at the **Weekend Pay** rate as defined in **POLICY-HR-32B**. The total cost was 2,50,000 INR.
 
 [KMRL_DOCUMENTS_CONTEXT_END]
 """
@@ -125,3 +158,4 @@ if user_input:
     # Optional: Add an expander to show the context used
     with st.expander("🔍 Show Document Context Used"):
         st.code(KMRL_DOCUMENTS_CONTEXT, language='markdown')
+        
